@@ -1,0 +1,21 @@
+# สร้างโฟลเดอร์โปรเจกต์
+mkdir backend
+cd backend
+
+# เริ่ม npm project
+npm init -y
+
+# ติดตั้ง TypeScript + ts-node + types ของ Node.js
+npm install typescript ts-node @types/node --save-dev
+
+# สร้างไฟล์ tsconfig.json
+npx tsc --init
+
+# ติดตั้ง Express
+npm install express
+
+# ติดตั้ง type definitions สำหรับ TypeScript
+npm install --save-dev @types/express
+
+# ใน package.json ให้ใส่
+"type": "module",
