@@ -12,3 +12,7 @@ export const pool = new Pool({
   max: 10,
   options: '-c search_path=mydb'
 })
+
+pool.connect()
+  .then(() => console.log('✅ Connected to database successfully'))
+  .catch(err => console.error('❌ Database connection failed:', err))

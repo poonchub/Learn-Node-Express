@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import express, { type Request, type Response } from 'express'
 import userRoutes from '../routes/userRoutes.js'
 import { errorHandler } from '../middlewares/errorHandler.js'
+import authRouter from '../routes/authRoutes.js'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // User routes
 app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/auth', authRouter)
 
 // Centralized error handling
 app.use(errorHandler)
