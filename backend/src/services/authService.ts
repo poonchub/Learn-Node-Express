@@ -1,41 +1,60 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { pool } from './db.js'
-import type { User } from '../models/userModel.js'
+import { AppError } from '../errors/AppError.js'
+import { PrismaClient } from '../generated/prisma/index.js'
 
+const prisma = new PrismaClient()
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'
 
 export const registerService = async (name: string, email: string, password: string) => {
+  // ตรวจสอบ email ซ้ำ
+  const existing = await prisma.users.findUnique({ where: { email } })
+  if (existing) {
+    throw new AppError('Email already exists', 409, 'EMAIL_DUPLICATE')
+  }
+
+  // เข้ารหัสรหัสผ่าน
   const hashed = await bcrypt.hash(password, 10)
 
-  const result = await pool.query<User>(
-    `INSERT INTO users (name, email, password, role)
-     VALUES ($1, $2, $3, 'user')
-     RETURNING id, name, email, role`,
-    [name, email, hashed]
-  )
+  // สร้าง user
+  const user = await prisma.users.create({
+    data: {
+      name,
+      email,
+      password: hashed,
+      role: 'user'
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  })
 
-  return result.rows[0]
+  return user
 }
 
 export const loginService = async (email: string, password: string) => {
-  const result = await pool.query<User>(
-    `SELECT * FROM users WHERE email = $1`,
-    [email]
-  )
-
-  const user = result.rows[0]
-  if (!user) throw new Error('User not found')
+  const user = await prisma.users.findUnique({ where: { email } })
+  if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND')
 
   const isValid = await bcrypt.compare(password, user.password)
-  if (!isValid) throw new Error('Invalid credentials')
+  if (!isValid) throw new AppError('Invalid credentials', 401, 'INVALID_CREDENTIALS')
 
-  // generate JWT
   const token = jwt.sign(
     { id: user.id, role: user.role },
     JWT_SECRET,
     { expiresIn: '1h' }
   )
 
-  return { token, user: { id: user.id, name: user.name, email: user.email, role: user.role } }
+  return {
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+  }
 }

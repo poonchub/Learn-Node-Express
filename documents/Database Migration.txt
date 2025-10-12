@@ -1,0 +1,13 @@
+ติดตั้ง Prisma + PostgreSQL Driver
+    npm install prisma --save-dev
+    npm install @prisma/client
+
+initialize โปรเจกต์
+    npx prisma init
+
+    npx prisma migrate dev --name init
+
+
+    กรณีตารางไม่ขึ้น
+    npx prisma migrate dev --name init --create-only
+    npx prisma migrate dev
