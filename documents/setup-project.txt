@@ -19,3 +19,8 @@ npm install --save-dev @types/express
 
 # ใน package.json ให้ใส่
 "type": "module",
+
+npm install --save-dev @types/bcrypt
+npm install zod
+npm install --save-dev @types/jsonwebtoken
+npm install --save-dev @types/pg

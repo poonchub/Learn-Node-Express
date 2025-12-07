@@ -11,3 +11,27 @@ initialize โปรเจกต์
     กรณีตารางไม่ขึ้น
     npx prisma migrate dev --name init --create-only
     npx prisma migrate dev
+
+สร้าง JWT_SECRET
+    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+วิธีเข้าดูฐานข้อมูล
+    วิธีที่ 1: ดูฐานข้อมูลด้วย Prisma Studio
+        รันคำสั่ง: npx prisma studio
+        จะเปิดเว็บที่ประมาณนี้: http://localhost:51212
+
+    วิธีที่ 2: ใช้โปรแกรม GUI
+        ใช้โปรแกรมเชื่อม PostgreSQL โดยตรง เช่น pgAdmin 4
+
+        เปิดโปรแกรม → Add new connection
+        แล้วใส่:
+            Host: localhost
+            Port: 5432
+            User: postgres
+            Password: 123456
+            Database: postgres
+
+ล้างฐานข้อมูล
+    npx prisma migrate reset
+    npx prisma migrate dev --name init --create-only
+    npx prisma migrate dev
